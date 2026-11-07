@@ -84,3 +84,7 @@ updates:
     schedule:
       interval: weekly
 ```
+
+## License
+
+Copyright (c) 2026-Present, Chronocratic. All rights reserved. See [LICENSE](LICENSE).
