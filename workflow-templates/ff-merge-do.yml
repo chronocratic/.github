@@ -10,5 +10,5 @@ jobs:
       contents: write
       pull-requests: write
       issues: write
-    uses: chronocratic/.github/.github/workflows/ff-merge-do.yml@v1.0.0
+    uses: chronocratic/.github/.github/workflows/ff-merge-do.yml@v0.1.0
     secrets: inherit

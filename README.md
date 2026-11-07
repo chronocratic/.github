@@ -20,7 +20,7 @@ Shared GitHub configuration for the chronocratic organization.
 ```yaml
 jobs:
   ci:
-    uses: chronocratic/.github/.github/workflows/build-and-test.yml@v1.0.0
+    uses: chronocratic/.github/.github/workflows/build-and-test.yml@v0.1.0
     with:
       package: chronocratic/models
 ```
@@ -59,15 +59,15 @@ Notes:
 
 Releases are fixed semver tags, never moved:
 
-- patch (`v1.0.1`): bug fix
-- minor (`v1.1.0`): new optional input or feature
-- major (`v2.0.0`): breaking change to inputs, secrets or behavior
+- patch (`v0.1.1`): bug fix
+- minor (`v0.2.0`): new optional input or feature
+- major (`v1.0.0`, then `v2.0.0`): breaking change to inputs, secrets or behavior; while on `0.x`, a minor bump may break
 
 Merge to `main`, then tag:
 
 ```bash
-git tag v1.1.0
-git push origin v1.1.0
+git tag v0.2.0
+git push origin v0.2.0
 ```
 
 ## Keeping callers current
