@@ -1,0 +1,6 @@
+{
+  "name": "Chronocratic: fast-forward merge",
+  "description": "Comment /fast-forward to fast-forward main to dev.",
+  "iconName": "octicon git-merge",
+  "categories": ["Python"]
+}

@@ -1,0 +1,114 @@
+name: Protected files check
+
+# Keeps one marker comment per protected file on a PR: a warning while the PR
+# changes the file, and a cleared note once it no longer does. Only the PR file
+# list is read; PR code is never checked out, so pull_request_target is safe.
+#
+# Callers trigger on pull_request_target [opened, synchronize, reopened] with a
+# `paths` filter that lists the same files, and grant `pull-requests: write`.
+# A file listed here but absent from the calling repository is never matched.
+
+on:
+  workflow_call:
+    inputs:
+      contributing-doc:
+        description: "Path of the policy section linked from each warning"
+        required: false
+        type: string
+        default: "docs/contributing.md#protected-project-files"
+
+permissions:
+  pull-requests: write
+
+jobs:
+  check:
+    name: Check protected files
+    runs-on: ubuntu-latest
+    steps:
+      - name: Update protected-file comments
+        uses: actions/github-script@v9
+        env:
+          CONTRIBUTING_DOC: ${{ inputs.contributing-doc }}
+        with:
+          script: |
+            // key: marker suffix; match: which PR files belong to the entry.
+            const PROTECTED = [
+              {
+                key: 'pyproject',
+                title: '**pyproject.toml** — Build Configuration',
+                match: f => f === 'pyproject.toml',
+                role: 'dependencies, build settings, and project metadata for all users',
+                checks: [
+                  'New dependencies are necessary and pinned',
+                  "Build/tool configurations don't break the CI pipeline",
+                  'Changes are backward-compatible',
+                ],
+              },
+              {
+                key: 'ruff',
+                title: '**ruff.toml** — Linter Configuration',
+                match: f => f === 'ruff.toml',
+                role: 'ruff linting and formatting rules for all contributors',
+                checks: [
+                  "Rule changes don't conflict with CI or pre-commit hooks",
+                  "New ignores don't mask legitimate issues",
+                  'Changes are backward-compatible',
+                ],
+              },
+              {
+                key: 'pre-commit',
+                title: '**.pre-commit-config.yaml** — Pre-commit Hooks',
+                match: f => f === '.pre-commit-config.yaml',
+                role: 'pre-commit hooks run by all contributors locally and in CI',
+                checks: [
+                  "New hooks don't conflict with existing tooling (ruff, ty)",
+                  'Hook versions are pinned and compatible',
+                  "Changes don't break the developer workflow",
+                ],
+              },
+              {
+                key: 'vscode',
+                title: '**.vscode settings** — Editor Configuration',
+                match: f => f.startsWith('.vscode/'),
+                role: 'linting, formatting, and type-checking for the team',
+                checks: [
+                  "Settings don't conflict with CI tooling (ruff, ty)",
+                  'Changes benefit all contributors, not local preferences',
+                ],
+              },
+            ];
+
+            const { owner, repo } = context.repo;
+            const issue_number = context.issue.number;
+            const files = await github.paginate(github.rest.pulls.listFiles, { owner, repo, pull_number: issue_number });
+            const comments = await github.paginate(github.rest.issues.listComments, { owner, repo, issue_number });
+
+            const baseRef = context.payload.pull_request.base.ref;
+            const docUrl = `https://github.com/${owner}/${repo}/blob/${baseRef}/${process.env.CONTRIBUTING_DOC}`;
+
+            for (const entry of PROTECTED) {
+              const marker = `<!-- protected-files-check:${entry.key} -->`;
+              const changed = files.filter(f => entry.match(f.filename));
+              const existing = comments.find(c => c.body && c.body.includes(marker));
+
+              let body;
+              if (changed.length > 0) {
+                const lines = changed.map(f => `- \`${f.filename}\` (${f.status})`).join('\n');
+                body = `${marker}\n⚠️ ${entry.title}\n\n` +
+                  `This PR modifies files that control ${entry.role}:\n\n${lines}\n\n` +
+                  `Core maintainers should verify:\n` +
+                  entry.checks.map(c => `- ${c}`).join('\n') +
+                  `\n\nSee [Contributing](${docUrl}) for policy.`;
+              } else if (existing) {
+                // Rolled back since the last flag: clear the warning instead of leaving it stale.
+                body = `${marker}\n✅ ${entry.title} is no longer modified by this PR. Protected-file warning cleared.`;
+              } else {
+                continue;
+              }
+
+              if (existing) {
+                await github.rest.issues.updateComment({ owner, repo, comment_id: existing.id, body });
+              } else {
+                await github.rest.issues.createComment({ owner, repo, issue_number, body });
+              }
+            }

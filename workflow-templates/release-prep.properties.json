@@ -1,0 +1,6 @@
+{
+  "name": "Chronocratic: release prep",
+  "description": "Assemble CHANGELOG.md on dev and open the release-prep PR.",
+  "iconName": "octicon rocket",
+  "categories": ["Python"]
+}

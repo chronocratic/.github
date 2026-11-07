@@ -1,0 +1,12 @@
+name: Publish docs
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  docs:
+    uses: chronocratic/.github/.github/workflows/docs-publish.yml@v1.0.0
+    with:
+      docs-url: https://chronocratic-CHANGE_ME.readthedocs.io/
+    secrets: inherit

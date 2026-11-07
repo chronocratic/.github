@@ -1,0 +1,6 @@
+{
+  "name": "Chronocratic: protected files check",
+  "description": "Flag PRs that change build, lint or editor config.",
+  "iconName": "octicon alert",
+  "categories": ["Python"]
+}

@@ -1,0 +1,10 @@
+name: Main pre-merge gate
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened]
+
+jobs:
+  gate:
+    uses: chronocratic/.github/.github/workflows/main-pre-merge-gate.yml@v1.0.0

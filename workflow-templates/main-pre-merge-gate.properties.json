@@ -1,0 +1,6 @@
+{
+  "name": "Chronocratic: main pre-merge gate",
+  "description": "Only dev may merge to main, and never with agent files.",
+  "iconName": "octicon shield",
+  "categories": ["Python"]
+}

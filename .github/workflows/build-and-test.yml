@@ -1,0 +1,105 @@
+name: Build and test
+
+# Test, lint, type check, build and docs build for a uv-managed package with a
+# `src/` layout. Callers choose the trigger (push to main, PRs to main and dev).
+
+on:
+  workflow_call:
+    inputs:
+      package:
+        description: "Import path under src/ used for coverage, e.g. chronocratic/models"
+        required: true
+        type: string
+      python-version:
+        description: "Python version for uv"
+        required: false
+        type: string
+        default: "3.12"
+      docs:
+        description: "Build the Sphinx docs from docs/ with the `docs` dependency group"
+        required: false
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6.0.3
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+      - name: Install uv
+        uses: astral-sh/setup-uv@v8.3.2
+        with:
+          python-version: ${{ inputs.python-version }}
+      - name: Install dependencies
+        run: uv sync
+      - name: Run tests
+        env:
+          PACKAGE: ${{ inputs.package }}
+        run: uv run pytest tests/ --cov="src/${PACKAGE}" --cov-report=xml
+
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6.0.3
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+      - name: Ruff check
+        uses: astral-sh/ruff-action@v4.1.0
+        with:
+          args: "check"
+          src: "./src"
+      - name: Ruff format check
+        uses: astral-sh/ruff-action@v4.1.0
+        with:
+          args: "format --check"
+          src: "./src ./tests"
+      - name: Install uv
+        uses: astral-sh/setup-uv@v8.3.2
+        with:
+          python-version: ${{ inputs.python-version }}
+      - name: Install dependencies
+        run: uv sync
+      - name: Ty check
+        run: uv run ty check src/
+
+  build:
+    runs-on: ubuntu-latest
+    needs: [test, lint]
+    steps:
+      - uses: actions/checkout@v6.0.3
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+      - name: Install uv
+        uses: astral-sh/setup-uv@v8.3.2
+        with:
+          python-version: ${{ inputs.python-version }}
+      - name: Build package
+        run: uv build
+      - name: Validate with twine
+        run: uvx twine check dist/*
+
+  docs:
+    if: ${{ inputs.docs }}
+    runs-on: ubuntu-latest
+    needs: [test, lint]
+    steps:
+      - uses: actions/checkout@v6.0.3
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+      - name: Install uv
+        uses: astral-sh/setup-uv@v8.3.2
+        with:
+          python-version: ${{ inputs.python-version }}
+      - name: Install dependencies
+        run: uv sync --group docs
+      - name: Build docs
+        run: uv run sphinx-build -b html docs/ docs/_build/

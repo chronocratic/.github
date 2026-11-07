@@ -1,0 +1,6 @@
+{
+  "name": "Chronocratic: sync release notes",
+  "description": "Copy the CHANGELOG.md section into the GitHub release.",
+  "iconName": "octicon tag",
+  "categories": ["Python"]
+}

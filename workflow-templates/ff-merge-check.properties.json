@@ -1,0 +1,6 @@
+{
+  "name": "Chronocratic: check fast-forward",
+  "description": "Comment /check-fast-forward on a dev to main PR.",
+  "iconName": "octicon git-pull-request",
+  "categories": ["Python"]
+}

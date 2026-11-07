@@ -1,0 +1,30 @@
+name: Bug report
+description: Something does not work as documented.
+type: Bug
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: What you did, what you expected and what happened instead.
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Minimal reproduction
+      description: The smallest script that shows the problem, with synthetic data.
+      render: python
+    validations:
+      required: true
+  - type: textarea
+    id: env
+    attributes:
+      label: Environment
+      description: Package version, Python, PyTorch, Lightning, OS and device.
+      placeholder: |
+        chronocratic-models 0.2.0
+        Python 3.12, torch 2.x, lightning 2.x
+        Ubuntu 24.04, CUDA 12.x
+    validations:
+      required: true

@@ -1,0 +1,14 @@
+name: Fast-forward merge
+
+on:
+  issue_comment:
+    types: [created]
+
+jobs:
+  merge:
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+    uses: chronocratic/.github/.github/workflows/ff-merge-do.yml@v1.0.0
+    secrets: inherit

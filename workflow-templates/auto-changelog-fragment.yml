@@ -1,0 +1,12 @@
+name: Changelog fragment
+
+on:
+  pull_request:
+    branches: [dev]
+    types: [opened, edited, synchronize, labeled, unlabeled]
+
+jobs:
+  fragment:
+    permissions:
+      contents: write
+    uses: chronocratic/.github/.github/workflows/auto-changelog-fragment.yml@v1.0.0

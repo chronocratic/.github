@@ -1,0 +1,6 @@
+{
+  "name": "Chronocratic: publish docs",
+  "description": "Trigger a Read the Docs build when a release is published.",
+  "iconName": "octicon book",
+  "categories": ["Python"]
+}

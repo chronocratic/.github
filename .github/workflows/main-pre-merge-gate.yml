@@ -1,0 +1,77 @@
+name: Main pre-merge gate
+
+# Rejects PRs to main that do not come from dev, and PRs that add or change
+# agent and planning files. Callers trigger on pull_request to main with types
+# [opened, synchronize, reopened].
+
+on:
+  workflow_call:
+    inputs:
+      forbidden:
+        description: "Newline-separated path fragments; each matches at a path boundary"
+        required: false
+        type: string
+        default: |
+          .claude/
+          .remember/
+          .planning/
+          MEMORY.md
+          CLAUDE.md
+          CONTEXT.md
+          STATE.md
+          ROADMAP.md
+          .continue-here.md
+          HANDOFF.json
+
+permissions:
+  contents: read
+
+jobs:
+  forbidden-files:
+    name: Check forbidden paths
+    runs-on: ubuntu-latest
+    concurrency:
+      group: pre-merge-gate-${{ github.repository }}-${{ github.event.pull_request.number }}
+      cancel-in-progress: true
+    steps:
+      - name: Reject non-dev PRs
+        if: ${{ github.head_ref != 'dev' }}
+        # The branch name is chosen by whoever opens the PR, so it reaches the
+        # shell through env, never through template expansion.
+        env:
+          HEAD_REF: ${{ github.head_ref }}
+        run: |
+          echo "::error::PRs from '${HEAD_REF}' to main are not allowed. Only dev→main merges are permitted."
+          exit 1
+
+      - name: Checkout
+        uses: actions/checkout@v6.0.3
+        with:
+          fetch-depth: 0
+
+      - name: Scan PR for forbidden files
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          FORBIDDEN: ${{ inputs.forbidden }}
+        run: |
+          CHANGED=$(git diff --diff-filter=ACMR --name-only "${BASE_SHA}..HEAD")
+          MATCHED=()
+
+          while IFS= read -r path; do
+            [ -z "$path" ] && continue
+            # Anchor to a path boundary (start of path or after a '/') so e.g.
+            # CLAUDE.md does not match NOTCLAUDE.md. Fixed-string match keeps
+            # dots in the fragment literal.
+            while IFS= read -r f; do
+              [ -n "$f" ] && MATCHED+=("$f")
+            done < <(printf '%s\n' "$CHANGED" | awk -v p="$path" 'index($0, p) == 1 || index($0, "/" p) > 0' || true)
+          done <<< "$FORBIDDEN"
+
+          if [ "${#MATCHED[@]}" -gt 0 ]; then
+            echo "::error::Forbidden files detected:"
+            for f in "${MATCHED[@]}"; do
+              echo "::error::  - $f"
+            done
+            exit 1
+          fi
+          echo "All clear."

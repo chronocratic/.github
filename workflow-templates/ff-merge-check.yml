@@ -1,0 +1,13 @@
+name: Check fast-forward
+
+on:
+  issue_comment:
+    types: [created]
+
+jobs:
+  check:
+    permissions:
+      contents: read
+      pull-requests: write
+      issues: write
+    uses: chronocratic/.github/.github/workflows/ff-merge-check.yml@v1.0.0

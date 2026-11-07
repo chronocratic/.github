@@ -1,0 +1,6 @@
+{
+  "name": "Chronocratic: publish to PyPI",
+  "description": "Build with the shared workflow and upload with trusted publishing.",
+  "iconName": "octicon package",
+  "categories": ["Python"]
+}

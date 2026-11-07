@@ -1,0 +1,28 @@
+name: Publish to PyPI
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  build:
+    uses: chronocratic/.github/.github/workflows/python-build.yml@v1.0.0
+
+  # PyPI trusted publishing does not support reusable workflows, so the upload
+  # stays here. Register this file as the trusted publisher on PyPI.
+  publish:
+    name: Upload release to PyPI
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi
+      url: https://pypi.org/p/chronocratic-CHANGE_ME
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist/
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@v1.14.1

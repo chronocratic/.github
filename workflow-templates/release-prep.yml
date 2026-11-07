@@ -1,0 +1,19 @@
+name: Release prep
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Release version, no leading v (e.g. 0.1.0a2)"
+        required: true
+        type: string
+
+jobs:
+  prep:
+    permissions:
+      contents: write
+      pull-requests: write
+    uses: chronocratic/.github/.github/workflows/release-prep.yml@v1.0.0
+    with:
+      version: ${{ inputs.version }}
+    secrets: inherit

@@ -1,0 +1,6 @@
+{
+  "name": "Chronocratic: build and test",
+  "description": "Test, lint, type check, build and docs build for a uv package.",
+  "iconName": "octicon beaker",
+  "categories": ["Python"]
+}

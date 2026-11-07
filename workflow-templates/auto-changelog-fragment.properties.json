@@ -1,0 +1,6 @@
+{
+  "name": "Chronocratic: changelog fragment",
+  "description": "Create and check a towncrier fragment on every PR to dev.",
+  "iconName": "octicon note",
+  "categories": ["Python"]
+}

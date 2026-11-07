@@ -1,0 +1,11 @@
+name: Sync release notes
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  sync:
+    permissions:
+      contents: write
+    uses: chronocratic/.github/.github/workflows/release-notes.yml@v1.0.0

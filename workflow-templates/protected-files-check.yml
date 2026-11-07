@@ -1,0 +1,16 @@
+name: Protected files check
+
+on:
+  pull_request_target:
+    types: [opened, synchronize, reopened]
+    paths:
+      - pyproject.toml
+      - ruff.toml
+      - .pre-commit-config.yaml
+      - .vscode/**
+
+jobs:
+  check:
+    permissions:
+      pull-requests: write
+    uses: chronocratic/.github/.github/workflows/protected-files-check.yml@v1.0.0
