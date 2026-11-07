@@ -40,7 +40,7 @@ jobs:
     # "Allow GitHub Actions to create and approve pull requests" is off.
     environment: ff_merge
     steps:
-      - uses: actions/checkout@v6.0.3
+      - uses: actions/checkout@v7.0.1
         with:
           ref: dev
           fetch-depth: 0
