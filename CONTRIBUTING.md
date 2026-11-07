@@ -4,6 +4,10 @@ Thank you for helping. Each repository describes its development setup in
 `docs/contributing.md`; this file covers what all chronocratic repositories
 share.
 
+## License of contributions
+
+**By submitting a contribution, you agree that it is licensed under the terms of the `LICENSE` file of the repository you contribute to.**
+
 ## Branches
 
 - Open pull requests against `dev`. Pull requests to `main` come only from
