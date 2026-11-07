@@ -4,7 +4,7 @@ name: Release prep
 # BEFORE the release. Run this, merge the resulting PR into `dev`, then open
 # the dev -> main PR and fast-forward it (`/fast-forward`). The dev -> main
 # merge cannot build the changelog itself: that merge is fast-forward only,
-# so main must equal dev's exact HEAD — every commit has to already be on dev.
+# so main must equal the exact HEAD of dev — every commit has to already be on dev.
 #
 # Callers run it from workflow_dispatch and pass the `version` input. The
 # FF_MERGE_TOKEN secret lives in the `ff_merge` environment of the calling
@@ -36,8 +36,8 @@ jobs:
     name: Build changelog and open PR
     runs-on: ubuntu-latest
     # FF_MERGE_TOKEN (PAT, in the `ff_merge` environment) acts as a real user, so
-    # it can open the PR — the GITHUB_TOKEN is blocked by the repo's "Allow GitHub
-    # Actions to create and approve pull requests" policy being off.
+    # it can open the PR — the GITHUB_TOKEN is blocked while the repository policy
+    # "Allow GitHub Actions to create and approve pull requests" is off.
     environment: ff_merge
     steps:
       - uses: actions/checkout@v6.0.3

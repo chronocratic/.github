@@ -1,8 +1,8 @@
 name: Publish docs
 
 # Trigger a Read the Docs build when a release is published, through the
-# project's generic incoming webhook (RTD: Admin > Integrations > Generic API
-# incoming webhook), instead of relying on GitHub events reaching RTD.
+# generic incoming webhook of the project (RTD: Admin > Integrations > Generic
+# API incoming webhook), instead of relying on GitHub events reaching RTD.
 #
 # The webhook only builds versions RTD already knows and has active, and it
 # never syncs new tags by itself. So it asks for `main` and the new tag:
