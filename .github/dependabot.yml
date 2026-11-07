@@ -1,0 +1,8 @@
+version: 2
+updates:
+  # Actions used inside the shared workflows. Merge the PRs, then tag a
+  # patch release so caller repositories pick them up.
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
