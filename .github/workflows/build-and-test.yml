@@ -50,22 +50,20 @@ jobs:
         with:
           fetch-depth: 0
           fetch-tags: true
-      - name: Ruff check
-        uses: astral-sh/ruff-action@v4.1.0
-        with:
-          args: "check"
-          src: "./src"
-      - name: Ruff format check
-        uses: astral-sh/ruff-action@v4.1.0
-        with:
-          args: "format --check"
-          src: "./src ./tests"
       - name: Install uv
         uses: astral-sh/setup-uv@v8.3.2
         with:
           python-version: ${{ inputs.python-version }}
       - name: Install dependencies
         run: uv sync
+      # Ruff from uv.lock, so CI, pre-commit and local runs agree. ruff-action
+      # resolves the newest release matching pyproject.toml instead, which can
+      # enable newly stabilized rules without a lock change.
+      - name: Ruff check
+        run: uv run ruff check src/
+      # setuptools_scm writes _version.py during `uv sync`; it is generated.
+      - name: Ruff format check
+        run: uv run ruff format --check --exclude _version.py src/ tests/
       - name: Ty check
         run: uv run ty check src/
 
