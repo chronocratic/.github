@@ -20,7 +20,7 @@ Shared GitHub configuration for the chronocratic organization.
 ```yaml
 jobs:
   ci:
-    uses: chronocratic/.github/.github/workflows/build-and-test.yml@v0.1.1
+    uses: chronocratic/.github/.github/workflows/build-and-test.yml@v0.1.2
     with:
       package: chronocratic/models
 ```
