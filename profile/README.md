@@ -7,6 +7,7 @@
 
 ## Projects
 
+- [**tslab**](https://github.com/chronocratic/tslab): a batteries-included lab for time series research, from local runs to SLURM clusters.
 - [**chronocratic-models**](https://github.com/chronocratic/chronocratic-models): ready-to-use time series models implemented in PyTorch and Lightning.
 - [**chronocratic-datasets**](https://github.com/chronocratic/chronocratic-datasets): ready-to-use time series datasets and DataModules for PyTorch Lightning.
 
